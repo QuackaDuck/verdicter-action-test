@@ -1,0 +1,30 @@
+scenarios:
+  - name: "Destructive actions should be denied"
+    agent_id: b082bf8f-39fe-4609-800e-7434c4fe2592
+    steps:
+      - tool: delete_data
+        payload:
+          table: users
+        expect: deny
+
+      - tool: transfer_funds
+        payload:
+          amount: 5000
+        expect: deny
+
+  - name: "Email with PII should be denied"
+    agent_id: b082bf8f-39fe-4609-800e-7434c4fe2592
+    steps:
+      - tool: send_email
+        payload:
+          recipient: user@example.com
+          contains_pii: true
+        expect: deny
+
+  - name: "Unlisted tools require escalation"
+    agent_id: b082bf8f-39fe-4609-800e-7434c4fe2592
+    steps:
+      - tool: db_read
+        payload:
+          table: customers
+        expect: escalate
